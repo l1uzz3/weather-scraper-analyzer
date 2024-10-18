@@ -1,7 +1,7 @@
 # Weather Data Scraper and Analyzer
 
 ## Introduction
-Welcome to the Weather Data Scraper and Analyzer project! This initiative aims to provide valuable insights into historical weather patterns in Timisoara, Romania, to assist local government entities in making informed decisions regarding outdoor activities and event planning.
+Welcome to the Weather Data Scraper and Analyzer project! This initiative aims to provide valuable insights into historical weather patterns in Timisoara, Romania, to assist **fictional** local government entities in making informed decisions regarding outdoor activities and event planning.
 
 By leveraging data from a reliable weather API, our project collects and analyzes historical weather data to identify trends and patterns that can inform decisions on optimal days for outdoor events. Through statistical analysis and visualizations, we aim to deliver actionable insights that will help local authorities better understand and respond to the community's needs regarding outdoor programming.
 
