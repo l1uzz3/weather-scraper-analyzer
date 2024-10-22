@@ -24,6 +24,5 @@ By leveraging data from a reliable weather API, our project collects and analyze
 
 ## Setup Instructions (to be completed...)
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/weather-scraper-analyzer.git
+1. Clone the repository
+2. 
