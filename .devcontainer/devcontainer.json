@@ -1,0 +1,28 @@
+{
+    "name": "Python Development Environment",
+    "build": {
+        "dockerfile": "./Dockerfile",
+        "context": "."
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "python.defaultInterpreterPath": "/home/weather_project_user/venv/bin/python",
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "terminal.integrated.profiles.linux": {
+                    "bash": {
+                        "path": "/bin/bash",
+                        "args": ["--login"]
+                    }
+                }
+            },
+            "extensions": [
+                "ms-python.python",
+                "streetsidesoftware.code-spell-checker",
+                "ms-azuretools.vscode-docker"
+            ]
+        }
+    },
+    "remoteUser": "weather_project_user",
+    "forwardPorts": [8080]
+}
