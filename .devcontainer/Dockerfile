@@ -1,47 +1,36 @@
-# Use Ubuntu 20.04 LTS as the base image
-FROM ubuntu:20.04
+# Use a lightweight Python 3.12 image
+FROM python:3.12-slim
 
-# Avoid prompts from apt to hang the build
-ARG DEBIAN_FRONTEND=noninteractive
-
-# Update the package repository and install necessary packages
-RUN apt-get update \
-    && apt-get upgrade -y \
-    && apt-get install -y \
-       sudo \
-       python3-pip \
-       python3-dev \
-       git \
-       vim \
-       curl \
-       wget \
-       bash-completion \
-       build-essential \
-       sqlite3 \
-       libxml2-dev libxslt1-dev python3-lxml \
+# Install essential system libraries (only if needed)
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    libxml2-dev \
+    libxslt1-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a new user 'weather_project_user' and give them sudo access
+# Create a non-root user for better security
 RUN useradd -m weather_project_user -s /bin/bash \
     && echo 'weather_project_user ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 
-# Switch to user 'weather_project_user'
 USER weather_project_user
 WORKDIR /home/weather_project_user
 
-# Set up a Python virtual environment and activate it in .bashrc
+# Set up a Python virtual environment and install dependencies
 RUN python3 -m pip install --user virtualenv \
     && python3 -m virtualenv venv \
     && echo "source ~/venv/bin/activate" >> ~/.bashrc
 
-# Install essential Python packages for the project
-RUN /home/weather_project_user/venv/bin/pip install requests pandas numpy matplotlib seaborn scikit-learn statsmodels beautifulsoup4 lxml
+# Install necessary Python libraries for the project
+RUN /home/weather_project_user/venv/bin/pip install \
+    requests pandas numpy matplotlib seaborn scikit-learn statsmodels beautifulsoup4 lxml
 
 # Set the default shell to bash instead of sh
 SHELL ["/bin/bash", "--login", "-c"]
 
-# Expose any necessary ports (adjust as needed)
+# Expose any necessary ports
 EXPOSE 8080
 
 # Default command to keep the container running
