@@ -6,7 +6,7 @@ Welcome to the Weather Data Scraper and Analyzer project! This initiative aims t
 By leveraging data from a reliable weather API, our project collects and analyzes historical weather data to identify trends and patterns that can inform decisions on optimal days for outdoor events. Through statistical analysis and visualizations, we aim to deliver actionable insights that will help local authorities better understand and respond to the community's needs regarding outdoor programming.
 
 ## Features
-- Fetches historical weather data using a weather API ([Open-Meteo](https://open-meteo.com/en/docs/historical-forecast-api)).
+- Fetches historical weather data using a weather API ([Open-Meteo](https://open-meteo.com/en/docs/historical-weather-api)).
 - Stores collected weather data in a structured format for easy access and analysis.
 - Analyzes weather data to calculate key trends such as average temperatures and rainfall frequency, humidity, wind, etc.
 - Visualizes data trends through interactive charts and graphs for clear and effective communication of findings.
