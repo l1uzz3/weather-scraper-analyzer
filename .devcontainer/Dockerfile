@@ -8,6 +8,11 @@ RUN apt-get update && apt-get install -y \
     libffi-dev \
     libxml2-dev \
     libxslt1-dev \
+    git \
+    vim \
+    ipykernel \
+    curl \
+    wget \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -25,7 +30,7 @@ RUN python3 -m pip install --user virtualenv \
 
 # Install necessary Python libraries for the project
 RUN /home/weather_project_user/venv/bin/pip install \
-    requests pandas numpy matplotlib seaborn scikit-learn statsmodels beautifulsoup4 lxml openmeteo-requests requests-cache retry-requests 
+    requests pandas numpy matplotlib seaborn scikit-learn statsmodels beautifulsoup4 lxml openmeteo-requests openmeteo requests-cache retry-requests openmeteopy
 
 # Set the default shell to bash instead of sh
 SHELL ["/bin/bash", "--login", "-c"]
