@@ -6,9 +6,9 @@ Welcome to the Weather Data Scraper and Analyzer project! This initiative aims t
 By leveraging data from a reliable weather API, our project collects and analyzes historical weather data to identify trends and patterns that can inform decisions on optimal days for outdoor events. Through statistical analysis and visualizations, we aim to deliver actionable insights that will help local authorities better understand and respond to the community's needs regarding outdoor programming.
 
 ## Features
-- Fetches historical weather data using a weather API (WeatherStack or OpenWeatherMap).
+- Fetches historical weather data using a weather API ([Open-Meteo](https://open-meteo.com/en/docs/historical-forecast-api)).
 - Stores collected weather data in a structured format for easy access and analysis.
-- Analyzes weather data to calculate key trends such as average temperatures and rainfall frequency.
+- Analyzes weather data to calculate key trends such as average temperatures and rainfall frequency, humidity, wind, etc.
 - Visualizes data trends through interactive charts and graphs for clear and effective communication of findings.
 
 ## Technologies Used
@@ -18,7 +18,7 @@ By leveraging data from a reliable weather API, our project collects and analyze
   - Matplotlib: For generating static graphs and visualizations.
   - Seaborn: For enhanced statistical graphics and visualizations.
 - **Weather API**: WeatherStack for accessing historical weather data.
-- **Containerization**: Docker (python 3.12-slim base image to ensure consistent development and deployment environments.
+- **Containerization**: Docker (python 3.12-slim base image) to ensure consistent development and deployment environments.
 - **Windows Subsystem for Linux (WSL)**: For creating a Unix-like environment on Windows machines to ensure compatibility with Unix-based tools and Docker containers.
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Project Setup Instructions
