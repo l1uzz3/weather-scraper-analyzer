@@ -29,7 +29,8 @@ RUN python3 -m pip install --user virtualenv \
 
 # Install necessary Python libraries for the project
 RUN /home/weather_project_user/venv/bin/pip install \
-    requests pandas numpy matplotlib seaborn scikit-learn statsmodels beautifulsoup4 lxml ipykernel requests_cache openmeteo_requests retry_requests
+    requests pandas numpy matplotlib seaborn scikit-learn statsmodels beautifulsoup4 lxml ipykernel requests_cache openmeteo_requests retry_requests \
+    sqlalchemy xgboost joblib tensorflow flask flask_sqlalchemy gunicorn dash plotly flask_wtf wtforms
 
 # Set the default shell to bash instead of sh
 SHELL ["/bin/bash", "--login", "-c"]
