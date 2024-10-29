@@ -25,6 +25,7 @@ WORKDIR /home/weather_project_user
 
 # Set up a Python virtual environment and install dependencies
 RUN python3 -m pip install --user virtualenv \
+    pytest pytest-cov sphinx sphinx-autodoc-typehints sphinx-rtd-theme \
     && python3 -m virtualenv venv \
     && echo "source ~/venv/bin/activate" >> ~/.bashrc
 

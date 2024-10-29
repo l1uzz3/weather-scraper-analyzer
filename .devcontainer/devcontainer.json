@@ -21,7 +21,8 @@
                 "streetsidesoftware.code-spell-checker",
                 "ms-azuretools.vscode-docker",
                 "ms-toolsai.jupyter",
-                "alexcvzz.vscode-sqlite"
+                "alexcvzz.vscode-sqlite",
+                "eamodio.gitlens"
             ]
         }
     },
