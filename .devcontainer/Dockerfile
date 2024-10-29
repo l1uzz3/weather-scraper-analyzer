@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     vim \
     curl \
     wget \
+    sqlite3 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -24,6 +25,7 @@ WORKDIR /home/weather_project_user
 
 # Set up a Python virtual environment and install dependencies
 RUN python3 -m pip install --user virtualenv \
+    pytest pytest-cov sphinx sphinx-autodoc-typehints sphinx-rtd-theme \
     && python3 -m virtualenv venv \
     && echo "source ~/venv/bin/activate" >> ~/.bashrc
 
