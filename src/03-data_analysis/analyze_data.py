@@ -1,33 +1,38 @@
-import pandas as pd
-import sqlite3
+# Importing libraries
+import pandas as pd, sqlite3
 import matplotlib.pyplot as plt
+import numpy as np
 import seaborn as sns
 
+# Setting up the connection to the database        
 conn = sqlite3.connect(r"/workspaces/weather-scraper-analyzer/data/weather_data.db")
-
 hourly_df = pd.read_sql(r"SELECT * FROM hourly_data", conn)
 daily_df = pd.read_sql(r"SELECT * FROM daily_data", conn)
 
+# Dropping the index column.
+hourly_df = hourly_df.drop(columns='index')
+daily_df = daily_df.drop(columns='index')
+# print(hourly_df.head(1))
+# print(daily_df.head(1))
+
 # Convert 'date' columns to datetime | This is because SQLite doesn't have a datetime datatype so it stores the data as object. So we have to convert it here for further use even
 # even if in the fetch script we converted it to date
-
 hourly_df['date'] = pd.to_datetime(hourly_df['date'])
 daily_df['date'] = pd.to_datetime(daily_df['date']) 
+# print(hourly_df.dtypes)
+# print(daily_df.dtypes)
 
-daily_df.drop(columns='index', inplace=True)
-hourly_df.drop(columns='index', inplace=True)
-
-# Set the date as the index for easier resampling
-
+# Setting the date as index
 hourly_df = hourly_df.set_index('date')
 daily_df = daily_df.set_index('date')
 
+
 class WeatherAnalyzer:
     # initializing the class and setting the variables 
-    def __init__(self, hourly_data, daily_data):
+    def __init__(self, hourly_data = hourly_df, daily_data = daily_df):
         self.hourly_data = hourly_data
         self.daily_data = daily_data
-
+        # Setting the metrics
         self.hourly_metrics = {
             'temperature_2m_C': ['mean', 'max', 'min', 'std'],
             'relative_humidity_2m_percent': ['mean', 'max', 'min', 'std'],
@@ -343,89 +348,270 @@ class WeatherAnalyzer:
             plt.ylabel(f'{parameter.capitalize()} (°C)')
             plt.legend(loc='upper left', title="Trend")
             plt.show()
+
+    # Boxplot weather variables distribution
+    def plot_seasonal_boxplots(self):
+        # Add 'season' column to the daily data based on the quarter
+        self.daily_data['season'] = self.daily_data.index.quarter.map(self.season_names)
+
+        # Plot temperature box plot
+        plt.figure(figsize=(15, 6))
+        sns.boxplot(x='season', y='temperature_2m_mean_C', data=self.daily_data, palette='coolwarm')
+        plt.title('Seasonal Temperature Distribution')
+        plt.xlabel('Season')
+        plt.ylabel('Mean Temperature (°C)')
+        plt.show()
+
+        # Plot precipitation box plot
+        plt.figure(figsize=(15, 6))
+        sns.boxplot(x='season', y='precipitation_sum_mm', data=self.daily_data, palette='Blues')
+        plt.title('Seasonal Precipitation Distribution')
+        plt.xlabel('Season')
+        plt.ylabel('Total Precipitation (mm)')
+        plt.show()
+
+        # Plot wind speed box plot
+        plt.figure(figsize=(15, 6))
+        sns.boxplot(x='season', y='wind_speed_10m_max_kmh', data=self.daily_data, palette='viridis')
+        plt.title('Seasonal Wind Speed Distribution')
+        plt.xlabel('Season')
+        plt.ylabel('Max Wind Speed (km/h)')
+        plt.show()
                         
+# through inheritance (powerful characteristic of classes in python (OOP language) we can inherit the parent class and create a child class)
+# it will inherit functions(methods) like aggregate_daily / aggregate_hourly, or other variables!!!
 
-# Usage
-# analyzer = WeatherAnalyzer(hourly_data=hourly_df, daily_data=daily_df)
+class ExtremeWeatherAnalyzer(WeatherAnalyzer):
+    def __init__(self, hourly_data, daily_data):
+        # calling the constructor of the parent class
+        super().__init__(hourly_data, daily_data)
+    
+    # Set fixed or percentile-based thresholds
+    def define_thresholds(self):
+        self.temperature_high = self.daily_data['temperature_2m_max_C'].quantile(0.95)
+        self.temperature_low = self.daily_data['temperature_2m_min_C'].quantile(0.05)
+        self.precipitation_high = self.daily_data['precipitation_sum_mm'].quantile(0.95)
+        self.precipitation_low = self.daily_data['precipitation_sum_mm'].quantile(0.05)
+        self.wind_speed_high = self.daily_data['wind_speed_10m_max_kmh'].quantile(0.95)
+        self.wind_speed_low = self.daily_data['wind_speed_10m_max_kmh'].quantile(0.05)
 
-### ***PLOTTING TRENDING***
+    def flag_extreme_events(self):
+        # Flag extreme high and low temperatures
+        self.daily_data['extreme_high_temp'] = self.daily_data['temperature_2m_max_C'] > self.temperature_high
+        self.daily_data['extreme_low_temp'] = self.daily_data['temperature_2m_min_C'] < self.temperature_low
+        
+        # Flag heavy precipitation days
+        self.daily_data['extreme_high_precipitation'] = self.daily_data['precipitation_sum_mm'] > self.precipitation_high
+        self.daily_data['extreme_low_precipitation'] = self.daily_data['precipitation_sum_mm'] < self.precipitation_low
 
-# max_temp_week_trend = analyzer.plot_trend('temperature_2m_max_C', 'week')
-# max_temp_month_trend = analyzer.plot_trend('temperature_2m_max_C', 'month')
-# max_temp_season_trend = analyzer.plot_trend('temperature_2m_max_C', 'season')
-# max_temp_year_trend = analyzer.plot_trend('temperature_2m_max_C', 'year')
-# min_temp_week_trend = analyzer.plot_trend('temperature_2m_min_C', 'week')
-# min_temp_month_trend = analyzer.plot_trend('temperature_2m_min_C', 'month')
-# min_temp_season_trend = analyzer.plot_trend('temperature_2m_min_C', 'season')
-# min_temp_year_trend = analyzer.plot_trend('temperature_2m_min_C', 'year')
-# mean_temp_week_trend = analyzer.plot_trend('temperature_2m_mean_C', 'week')
-# mean_temp_month_trend = analyzer.plot_trend('temperature_2m_mean_C', 'month')
-# mean_temp_season_trend = analyzer.plot_trend('temperature_2m_mean_C', 'season')
-# mean_temp_year_trend = analyzer.plot_trend('temperature_2m_mean_C', 'year')
-
-
-# precipitation_week_trend = analyzer.plot_trend('precipitation_sum_mm', 'week')
-# precipitation_month_trend = analyzer.plot_trend('precipitation_sum_mm', 'month')
-# precipitation_season_trend = analyzer.plot_trend('precipitation_sum_mm', 'season')
-# precipitation_year_trend = analyzer.plot_trend('precipitation_sum_mm', 'year')
-# windspeed_week_trend = analyzer.plot_trend('wind_speed_10m_max_kmh', 'week')
-# windspeed_month_trend = analyzer.plot_trend('wind_speed_10m_max_kmh', 'month')
-# windspeed_season_trend = analyzer.plot_trend('wind_speed_10m_max_kmh', 'season')
-# windspeed_year_trend = analyzer.plot_trend('wind_speed_10m_max_kmh', 'year')
-# windgust_week_trend = analyzer.plot_trend('wind_gusts_10m_max_kmh', 'week')
-# windgust_month_trend = analyzer.plot_trend('wind_gusts_10m_max_kmh', 'month')
-# windgust_season_trend = analyzer.plot_trend('wind_gusts_10m_max_kmh', 'season')
-# windgust_year_trend = analyzer.plot_trend('wind_gusts_10m_max_kmh', 'year')
+        # Flag high wind speed days
+        self.daily_data['extreme_high_wind_speed'] = self.daily_data['wind_speed_10m_max_kmh'] > self.wind_speed_high
+        self.daily_data['extreme_low_wind_speed'] = self.daily_data['wind_speed_10m_max_kmh'] < self.wind_speed_low
 
 
-### ***PLOTTING VARIABILITY***
+    def calculate_frequency(self):
+        # Calculate the frequency of extreme events by year
+        extreme_events = self.daily_data.groupby(self.daily_data.index.year)[[
+            'extreme_high_temp', 'extreme_low_temp', 'extreme_high_precipitation', 'extreme_low_precipitation', 
+            'extreme_high_wind_speed', 'extreme_low_wind_speed']].sum()
+        
+        return extreme_events
 
-# TEMPERATURE
-# temp_high_variability_week = analyzer.plot_variability('temperature_2m_C', 'week', 5, 'above')
-# temp_low_variability_week = analyzer.plot_variability('temperature_2m_C', 'week', 5, 'under')
-# temp_high_variability_month = analyzer.plot_variability('temperature_2m_C', 'month', 5, 'above')
-# temp_low_variability_month = analyzer.plot_variability('temperature_2m_C', 'month', 5, 'under')
-# temp_high_variability_season = analyzer.plot_variability('temperature_2m_C', 'season', 5, 'above')
-# temp_low_variability_season = analyzer.plot_variability('temperature_2m_C', 'season', 5, 'under')
-# temp_high_variability_year = analyzer.plot_variability('temperature_2m_C', 'year', 5, 'above')
-# temp_low_variability_year = analyzer.plot_variability('temperature_2m_C', 'year', 5, 'under')
+    def plot_high_extreme_events(self, extreme_events):
 
-# RELATIVE HUMIDITY
-# rel_humidity_high_variability_week = analyzer.plot_variability('relative_humidity_2m_percent', 'week', 5, 'above')
-# rel_humidity_low_variability_week = analyzer.plot_variability('relative_humidity_2m_percent', 'week', 5, 'under')
-# rel_humidity_high_variability_month = analyzer.plot_variability('relative_humidity_2m_percent', 'month', 5, 'above')
-# rel_humidity_low_variability_month = analyzer.plot_variability('relative_humidity_2m_percent', 'month', 5, 'under')
-# rel_humidity_high_variability_season = analyzer.plot_variability('relative_humidity_2m_percent', 'season', 5, 'above')
-# rel_humidity_low_variability_season = analyzer.plot_variability('relative_humidity_2m_percent', 'season', 5, 'under')
-# rel_humidity_high_variability_year = analyzer.plot_variability('relative_humidity_2m_percent', 'year', 5, 'above')
-# rel_humidity_low_variability_year = analyzer.plot_variability('relative_humidity_2m_percent', 'year', 5, 'under')
+        plt.figure(figsize=(12, 8))
 
-# PRECIPITATION
-# precipitation_high_variability_week = analyzer.plot_variability('precipitation_mm', 'week', 5, 'above')
-# precipitation_low_variability_week = analyzer.plot_variability('precipitation_mm', 'week', 5, 'under')
-# precipitation_high_variability_month = analyzer.plot_variability('precipitation_mm', 'month', 5, 'above')
-# precipitation_low_variability_month = analyzer.plot_variability('precipitation_mm', 'month', 5, 'under')
-# precipitation_high_variability_season = analyzer.plot_variability('precipitation_mm', 'season', 5, 'above')
-# precipitation_low_variability_season = analyzer.plot_variability('precipitation_mm', 'season', 5, 'under')
-# precipitation_high_variability_year = analyzer.plot_variability('precipitation_mm', 'year', 5, 'above')
-# precipitation_low_variability_year = analyzer.plot_variability('precipitation_mm', 'year', 5, 'under')
+        # Scatter plot for extreme events (high)
+        plt.scatter(extreme_events.index, extreme_events['extreme_high_temp'], label='Extreme High Temp', color='red')
+        plt.scatter(extreme_events.index, extreme_events['extreme_high_precipitation'], label='Heavy Precipitation', color='green')
+        plt.scatter(extreme_events.index, extreme_events['extreme_high_wind_speed'], label='High Wind Speed', color='purple')
 
-# WIND SPEED
-# windspeed_high_variability_week = analyzer.plot_variability('wind_speed_10m_kmh', 'week', 5, 'above')
-# windspeed_low_variability_week = analyzer.plot_variability('wind_speed_10m_kmh', 'week', 5, 'under')
-# windspeed_high_variability_month = analyzer.plot_variability('wind_speed_10m_kmh', 'month', 5, 'above')
-# windspeed_low_variability_month = analyzer.plot_variability('wind_speed_10m_kmh', 'month', 5, 'under')
-# windspeed_high_variability_season = analyzer.plot_variability('wind_speed_10m_kmh', 'season', 5, 'above')
-# windspeed_low_variability_season = analyzer.plot_variability('wind_speed_10m_kmh', 'season', 5, 'under')
-# windspeed_high_variability_year = analyzer.plot_variability('wind_speed_10m_kmh', 'year', 5, 'above')
-# windspeed_low_variability_year = analyzer.plot_variability('wind_speed_10m_kmh', 'year', 5, 'under')
+        # Smoothed line for extreme high temperatures using a rolling mean
+        extreme_events['extreme_high_temp'].rolling(window=3).mean().plot(
+            linestyle='--', color='red', label='Smoothed High Temp', ax=plt.gca()
+        )
+        extreme_events['extreme_high_precipitation'].rolling(window=3).mean().plot(
+            linestyle='--', color='green', label='Smoothed high precip', ax=plt.gca()
+        )
+        extreme_events['extreme_high_wind_speed'].rolling(window=3).mean().plot(
+            linestyle='--', color='purple', label='Smoothed high wind speed', ax=plt.gca()
+        )
+        # Annotations for specific events
+        plt.annotate(
+            'Heatwave Year(2024)', xy=(2024, extreme_events['extreme_high_temp'].max()),
+            xytext=(2024, 45), arrowprops=dict(facecolor='black', arrowstyle='->')
+        )
+        
+        plt.annotate(
+            'High wind speed Year(2023)', xy=(2023, extreme_events['extreme_high_wind_speed'].max()),
+            xytext=(2023, 35), arrowprops=dict(facecolor='black', arrowstyle='->')
+        )
+        plt.annotate(
+            f"Heavy precipitation year(2010)", xy=(2010, extreme_events['extreme_high_precipitation'].max()),
+            xytext=(2010, 38), arrowprops=dict(facecolor='black', arrowstyle='->')
+        )
+        
+        # Plot details
+        plt.title('Frequency of High Extreme Weather Events Over Time')
+        plt.xlabel('Year')
+        plt.ylabel('Number of Extreme Events')
+        plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), title="Events")
+        plt.grid(True)
+        plt.show()
 
-# WIND GUSTS
-# windgust_high_variability_week = analyzer.plot_variability('wind_gusts_10m_kmh', 'week', 5, 'above')
-# windgust_low_variability_week = analyzer.plot_variability('wind_gusts_10m_kmh', 'week', 5, 'under')
-# windgust_high_variability_month = analyzer.plot_variability('wind_gusts_10m_kmh', 'month', 5, 'above')
-# windgust_low_variability_month = analyzer.plot_variability('wind_gusts_10m_kmh', 'month', 5, 'under')
-# windgust_high_variability_season = analyzer.plot_variability('wind_gusts_10m_kmh', 'season', 5, 'above')
-# windgust_low_variability_season = analyzer.plot_variability('wind_gusts_10m_kmh', 'season', 5, 'under')
-# windgust_high_variability_year = analyzer.plot_variability('wind_gusts_10m_kmh', 'year', 5, 'above')
-# windgust_low_variability_year = analyzer.plot_variability('wind_gusts_10m_kmh', 'year', 5, 'under')
+    def plot_low_extreme_events(self, extreme_events):
+
+        plt.figure(figsize=(12, 8))
+
+        # Scatter plot for extreme events (low)
+        plt.scatter(extreme_events.index, extreme_events['extreme_low_temp'], label='Extreme Low Temp', color='blue')
+        plt.scatter(extreme_events.index, extreme_events['extreme_low_precipitation'], label='Extreme low precipitation', color='black')
+        plt.scatter(extreme_events.index, extreme_events['extreme_low_wind_speed'], label='Extreme low windspeed', color='purple')
+        
+        # Smoothed line for extreme high temperatures using a rolling mean
+        extreme_events['extreme_low_temp'].rolling(window=3).mean().plot(
+            linestyle='--', color='blue', label='Smoothed low Temp', ax=plt.gca()
+        )
+        extreme_events['extreme_low_precipitation'].rolling(window=3).mean().plot(
+            linestyle='--', color='black', label='Smoothed low precip', ax=plt.gca()
+        )
+        extreme_events['extreme_low_wind_speed'].rolling(window=3).mean().plot(
+            linestyle='--', color='purple', label='Smoothed low wind speed', ax=plt.gca()
+        )
+        # Annotations for specific events        
+        plt.annotate(
+            'Cold Wave Year(2003)', xy=(2003, extreme_events['extreme_low_temp'].max()),
+            xytext=(2003, 37), arrowprops=dict(facecolor='black', arrowstyle='->')
+        )
+        plt.annotate(
+            'Low precipitation year(all)', xy=(2010, extreme_events['extreme_low_precipitation'].max()),
+            xytext=(2010, 2), arrowprops=dict(facecolor='black', arrowstyle='->')
+        )
+        plt.annotate(
+            'Low speed wind year(2014)', xy=(2014, extreme_events['extreme_low_wind_speed'].max()),
+            xytext=(2014, 40), arrowprops=dict(facecolor='black', arrowstyle='->')
+        )
+
+        # Plot details
+        plt.title('Frequency of Low Extreme Weather Events Over Time')
+        plt.xlabel('Year')
+        plt.ylabel('Number of Extreme Events')
+        plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), title="Events")
+        plt.grid(True)
+        plt.show()
+
+    def calculate_average_values(self):
+        # Calculate the average values for each extreme event
+        avg_high_temp = self.daily_data[self.daily_data['extreme_high_temp']]['temperature_2m_max_C'].mean()
+        avg_low_temp = self.daily_data[self.daily_data['extreme_low_temp']]['temperature_2m_min_C'].mean()
+        avg_high_precip = self.daily_data[self.daily_data['extreme_high_precipitation']]['precipitation_sum_mm'].mean()
+        low_precip_data = self.daily_data[self.daily_data['extreme_low_precipitation']]['precipitation_sum_mm']
+        avg_low_precip = low_precip_data.mean() if not low_precip_data.empty else 0 
+        avg_high_wind = self.daily_data[self.daily_data['extreme_high_wind_speed']]['wind_speed_10m_max_kmh'].mean()
+        avg_low_wind = self.daily_data[self.daily_data['extreme_low_wind_speed']]['wind_speed_10m_max_kmh'].mean()
+        # Print the average values
+        print(f"Average High Temperature (Extreme Events): {avg_high_temp:.2f} °C")
+        print(f"Average Low Temperature (Extreme Events): {avg_low_temp:.2f} °C")
+        print(f"Average High Precipitation (Extreme Events): {avg_high_precip:.2f} mm")
+        print(f"Average Low Precipitation (Extreme Events): {avg_low_precip:.2f} mm")
+        print(f"Average High Wind Speed (Extreme Events): {avg_high_wind:.2f} km/h")
+        print(f"Average Low Wind Speed (Extreme Events): {avg_low_wind:.2f} km/h")
+
+## Usage
+if __name__ == '__main__':
+    analyzer = WeatherAnalyzer()
+    print("It works before defining the variable extreme_weather_analyzer to the ExtremeWeatherAnalyzer class...")
+    extreme_weather_analyzer = ExtremeWeatherAnalyzer(hourly_df, daily_df)
+    
+    ## ***PLOTTING TRENDING***
+
+    max_temp_week_trend = analyzer.plot_trend('temperature_2m_max_C', 'week')
+    max_temp_month_trend = analyzer.plot_trend('temperature_2m_max_C', 'month')
+    max_temp_season_trend = analyzer.plot_trend('temperature_2m_max_C', 'season')
+    max_temp_year_trend = analyzer.plot_trend('temperature_2m_max_C', 'year')
+    min_temp_week_trend = analyzer.plot_trend('temperature_2m_min_C', 'week')
+    min_temp_month_trend = analyzer.plot_trend('temperature_2m_min_C', 'month')
+    min_temp_season_trend = analyzer.plot_trend('temperature_2m_min_C', 'season')
+    min_temp_year_trend = analyzer.plot_trend('temperature_2m_min_C', 'year')
+    mean_temp_week_trend = analyzer.plot_trend('temperature_2m_mean_C', 'week')
+    mean_temp_month_trend = analyzer.plot_trend('temperature_2m_mean_C', 'month')
+    mean_temp_season_trend = analyzer.plot_trend('temperature_2m_mean_C', 'season')
+    mean_temp_year_trend = analyzer.plot_trend('temperature_2m_mean_C', 'year')
+
+
+    precipitation_week_trend = analyzer.plot_trend('precipitation_sum_mm', 'week')
+    precipitation_month_trend = analyzer.plot_trend('precipitation_sum_mm', 'month')
+    precipitation_season_trend = analyzer.plot_trend('precipitation_sum_mm', 'season')
+    precipitation_year_trend = analyzer.plot_trend('precipitation_sum_mm', 'year')
+    windspeed_week_trend = analyzer.plot_trend('wind_speed_10m_max_kmh', 'week')
+    windspeed_month_trend = analyzer.plot_trend('wind_speed_10m_max_kmh', 'month')
+    windspeed_season_trend = analyzer.plot_trend('wind_speed_10m_max_kmh', 'season')
+    windspeed_year_trend = analyzer.plot_trend('wind_speed_10m_max_kmh', 'year')
+    windgust_week_trend = analyzer.plot_trend('wind_gusts_10m_max_kmh', 'week')
+    windgust_month_trend = analyzer.plot_trend('wind_gusts_10m_max_kmh', 'month')
+    windgust_season_trend = analyzer.plot_trend('wind_gusts_10m_max_kmh', 'season')
+    windgust_year_trend = analyzer.plot_trend('wind_gusts_10m_max_kmh', 'year')
+
+
+    ## ***PLOTTING VARIABILITY***
+
+    # TEMPERATURE
+    temp_high_variability_week = analyzer.plot_variability('temperature_2m_C', 'week', 5, 'above')
+    temp_low_variability_week = analyzer.plot_variability('temperature_2m_C', 'week', 5, 'under')
+    temp_high_variability_month = analyzer.plot_variability('temperature_2m_C', 'month', 5, 'above')
+    temp_low_variability_month = analyzer.plot_variability('temperature_2m_C', 'month', 5, 'under')
+    temp_high_variability_season = analyzer.plot_variability('temperature_2m_C', 'season', 5, 'above')
+    temp_low_variability_season = analyzer.plot_variability('temperature_2m_C', 'season', 5, 'under')
+    temp_high_variability_year = analyzer.plot_variability('temperature_2m_C', 'year', 5, 'above')
+    temp_low_variability_year = analyzer.plot_variability('temperature_2m_C', 'year', 5, 'under')
+
+    # RELATIVE HUMIDITY
+    rel_humidity_high_variability_week = analyzer.plot_variability('relative_humidity_2m_percent', 'week', 5, 'above')
+    rel_humidity_low_variability_week = analyzer.plot_variability('relative_humidity_2m_percent', 'week', 5, 'under')
+    rel_humidity_high_variability_month = analyzer.plot_variability('relative_humidity_2m_percent', 'month', 5, 'above')
+    rel_humidity_low_variability_month = analyzer.plot_variability('relative_humidity_2m_percent', 'month', 5, 'under')
+    rel_humidity_high_variability_season = analyzer.plot_variability('relative_humidity_2m_percent', 'season', 5, 'above')
+    rel_humidity_low_variability_season = analyzer.plot_variability('relative_humidity_2m_percent', 'season', 5, 'under')
+    rel_humidity_high_variability_year = analyzer.plot_variability('relative_humidity_2m_percent', 'year', 5, 'above')
+    rel_humidity_low_variability_year = analyzer.plot_variability('relative_humidity_2m_percent', 'year', 5, 'under')
+
+    # PRECIPITATION
+    precipitation_high_variability_week = analyzer.plot_variability('precipitation_mm', 'week', 5, 'above')
+    precipitation_low_variability_week = analyzer.plot_variability('precipitation_mm', 'week', 5, 'under')
+    precipitation_high_variability_month = analyzer.plot_variability('precipitation_mm', 'month', 5, 'above')
+    precipitation_low_variability_month = analyzer.plot_variability('precipitation_mm', 'month', 5, 'under')
+    precipitation_high_variability_season = analyzer.plot_variability('precipitation_mm', 'season', 5, 'above')
+    precipitation_low_variability_season = analyzer.plot_variability('precipitation_mm', 'season', 5, 'under')
+    precipitation_high_variability_year = analyzer.plot_variability('precipitation_mm', 'year', 5, 'above')
+    precipitation_low_variability_year = analyzer.plot_variability('precipitation_mm', 'year', 5, 'under')
+
+    # WIND SPEED
+    windspeed_high_variability_week = analyzer.plot_variability('wind_speed_10m_kmh', 'week', 5, 'above')
+    windspeed_low_variability_week = analyzer.plot_variability('wind_speed_10m_kmh', 'week', 5, 'under')
+    windspeed_high_variability_month = analyzer.plot_variability('wind_speed_10m_kmh', 'month', 5, 'above')
+    windspeed_low_variability_month = analyzer.plot_variability('wind_speed_10m_kmh', 'month', 5, 'under')
+    windspeed_high_variability_season = analyzer.plot_variability('wind_speed_10m_kmh', 'season', 5, 'above')
+    windspeed_low_variability_season = analyzer.plot_variability('wind_speed_10m_kmh', 'season', 5, 'under')
+    windspeed_high_variability_year = analyzer.plot_variability('wind_speed_10m_kmh', 'year', 5, 'above')
+    windspeed_low_variability_year = analyzer.plot_variability('wind_speed_10m_kmh', 'year', 5, 'under')
+
+    # WIND GUSTS
+    windgust_high_variability_week = analyzer.plot_variability('wind_gusts_10m_kmh', 'week', 5, 'above')
+    windgust_low_variability_week = analyzer.plot_variability('wind_gusts_10m_kmh', 'week', 5, 'under')
+    windgust_high_variability_month = analyzer.plot_variability('wind_gusts_10m_kmh', 'month', 5, 'above')
+    windgust_low_variability_month = analyzer.plot_variability('wind_gusts_10m_kmh', 'month', 5, 'under')
+    windgust_high_variability_season = analyzer.plot_variability('wind_gusts_10m_kmh', 'season', 5, 'above')
+    windgust_low_variability_season = analyzer.plot_variability('wind_gusts_10m_kmh', 'season', 5, 'under')
+    windgust_high_variability_year = analyzer.plot_variability('wind_gusts_10m_kmh', 'year', 5, 'above')
+    windgust_low_variability_year = analyzer.plot_variability('wind_gusts_10m_kmh', 'year', 5, 'under')
+
+    # WEATHER VARIABLES DISTRIBUTION
+    analyzer.plot_seasonal_boxplots()
+
+    # EXTREME WEATHER ANALYZER CLASS
+    extreme_weather_analyzer.define_thresholds()
+    extreme_weather_analyzer.flag_extreme_events()
+    extreme_events = extreme_weather_analyzer.calculate_frequency()
+    average_extreme_events = extreme_weather_analyzer.calculate_average_values()
+    extreme_weather_analyzer.plot_high_extreme_events(extreme_events)
+    extreme_weather_analyzer.plot_low_extreme_events(extreme_events)
