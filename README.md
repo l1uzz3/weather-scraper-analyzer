@@ -17,7 +17,7 @@ By leveraging data from a reliable weather API, our project collects and analyze
 - **Visualization Libraries**: 
   - Matplotlib: For generating static graphs and visualizations.
   - Seaborn: For enhanced statistical graphics and visualizations.
-- **Weather API**: WeatherStack for accessing historical weather data.
+- **Weather API**: Open-Meteo for accessing historical weather data.
 - **Containerization**: Docker (python 3.12-slim base image) to ensure consistent development and deployment environments.
 - **Windows Subsystem for Linux (WSL)**: For creating a Unix-like environment on Windows machines to ensure compatibility with Unix-based tools and Docker containers.
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
