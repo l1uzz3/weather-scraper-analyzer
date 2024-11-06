@@ -1,0 +1,307 @@
+.
+├── LICENSE
+├── README.md
+├── data
+│   ├── daily_data.sql
+│   ├── hourly_data.sql
+│   └── weather_data.db
+├── docs
+│   ├── Makefile
+│   ├── _build
+│   │   └── html
+│   │       ├── _sources
+│   │       │   ├── index.rst.txt
+│   │       │   ├── modules.rst.txt
+│   │       │   ├── src.br01_02_setup_api_store_data.fetch_weather.rst.txt
+│   │       │   ├── src.br01_02_setup_api_store_data.rst.txt
+│   │       │   ├── src.br03_data_analysis.rst.txt
+│   │       │   ├── src.br04_machine_learning1.rst.txt
+│   │       │   ├── src.br05_machine_learning2.rst.txt
+│   │       │   └── src.rst.txt
+│   │       ├── _static
+│   │       │   ├── _sphinx_javascript_frameworks_compat.js
+│   │       │   ├── basic.css
+│   │       │   ├── css
+│   │       │   │   ├── badge_only.css
+│   │       │   │   ├── fonts
+│   │       │   │   │   ├── Roboto-Slab-Bold.woff
+│   │       │   │   │   ├── Roboto-Slab-Bold.woff2
+│   │       │   │   │   ├── Roboto-Slab-Regular.woff
+│   │       │   │   │   ├── Roboto-Slab-Regular.woff2
+│   │       │   │   │   ├── fontawesome-webfont.eot
+│   │       │   │   │   ├── fontawesome-webfont.svg
+│   │       │   │   │   ├── fontawesome-webfont.ttf
+│   │       │   │   │   ├── fontawesome-webfont.woff
+│   │       │   │   │   ├── fontawesome-webfont.woff2
+│   │       │   │   │   ├── lato-bold-italic.woff
+│   │       │   │   │   ├── lato-bold-italic.woff2
+│   │       │   │   │   ├── lato-bold.woff
+│   │       │   │   │   ├── lato-bold.woff2
+│   │       │   │   │   ├── lato-normal-italic.woff
+│   │       │   │   │   ├── lato-normal-italic.woff2
+│   │       │   │   │   ├── lato-normal.woff
+│   │       │   │   │   └── lato-normal.woff2
+│   │       │   │   └── theme.css
+│   │       │   ├── doctools.js
+│   │       │   ├── documentation_options.js
+│   │       │   ├── file.png
+│   │       │   ├── fonts
+│   │       │   │   ├── Lato
+│   │       │   │   │   ├── lato-bold.eot
+│   │       │   │   │   ├── lato-bold.ttf
+│   │       │   │   │   ├── lato-bold.woff
+│   │       │   │   │   ├── lato-bold.woff2
+│   │       │   │   │   ├── lato-bolditalic.eot
+│   │       │   │   │   ├── lato-bolditalic.ttf
+│   │       │   │   │   ├── lato-bolditalic.woff
+│   │       │   │   │   ├── lato-bolditalic.woff2
+│   │       │   │   │   ├── lato-italic.eot
+│   │       │   │   │   ├── lato-italic.ttf
+│   │       │   │   │   ├── lato-italic.woff
+│   │       │   │   │   ├── lato-italic.woff2
+│   │       │   │   │   ├── lato-regular.eot
+│   │       │   │   │   ├── lato-regular.ttf
+│   │       │   │   │   ├── lato-regular.woff
+│   │       │   │   │   └── lato-regular.woff2
+│   │       │   │   └── RobotoSlab
+│   │       │   │       ├── roboto-slab-v7-bold.eot
+│   │       │   │       ├── roboto-slab-v7-bold.ttf
+│   │       │   │       ├── roboto-slab-v7-bold.woff
+│   │       │   │       ├── roboto-slab-v7-bold.woff2
+│   │       │   │       ├── roboto-slab-v7-regular.eot
+│   │       │   │       ├── roboto-slab-v7-regular.ttf
+│   │       │   │       ├── roboto-slab-v7-regular.woff
+│   │       │   │       └── roboto-slab-v7-regular.woff2
+│   │       │   ├── jquery.js
+│   │       │   ├── js
+│   │       │   │   ├── badge_only.js
+│   │       │   │   ├── theme.js
+│   │       │   │   └── versions.js
+│   │       │   ├── language_data.js
+│   │       │   ├── minus.png
+│   │       │   ├── plus.png
+│   │       │   ├── pygments.css
+│   │       │   ├── searchtools.js
+│   │       │   └── sphinx_highlight.js
+│   │       ├── genindex.html
+│   │       ├── index.html
+│   │       ├── modules.html
+│   │       ├── objects.inv
+│   │       ├── search.html
+│   │       ├── searchindex.js
+│   │       ├── src.br01_02_setup_api_store_data.fetch_weather.html
+│   │       ├── src.br01_02_setup_api_store_data.html
+│   │       ├── src.br03_data_analysis.html
+│   │       ├── src.br04_machine_learning1.html
+│   │       ├── src.br05_machine_learning2.html
+│   │       └── src.html
+│   ├── _sources
+│   │   ├── index.rst.txt
+│   │   ├── modules.rst.txt
+│   │   ├── src.br01_02_setup_api_store_data.fetch_weather.rst.txt
+│   │   ├── src.br01_02_setup_api_store_data.rst.txt
+│   │   ├── src.br03_data_analysis.rst.txt
+│   │   ├── src.br04_machine_learning1.rst.txt
+│   │   ├── src.br05_machine_learning2.rst.txt
+│   │   └── src.rst.txt
+│   ├── _static
+│   │   ├── _sphinx_javascript_frameworks_compat.js
+│   │   ├── basic.css
+│   │   ├── css
+│   │   │   ├── badge_only.css
+│   │   │   ├── fonts
+│   │   │   │   ├── Roboto-Slab-Bold.woff
+│   │   │   │   ├── Roboto-Slab-Bold.woff2
+│   │   │   │   ├── Roboto-Slab-Regular.woff
+│   │   │   │   ├── Roboto-Slab-Regular.woff2
+│   │   │   │   ├── fontawesome-webfont.eot
+│   │   │   │   ├── fontawesome-webfont.svg
+│   │   │   │   ├── fontawesome-webfont.ttf
+│   │   │   │   ├── fontawesome-webfont.woff
+│   │   │   │   ├── fontawesome-webfont.woff2
+│   │   │   │   ├── lato-bold-italic.woff
+│   │   │   │   ├── lato-bold-italic.woff2
+│   │   │   │   ├── lato-bold.woff
+│   │   │   │   ├── lato-bold.woff2
+│   │   │   │   ├── lato-normal-italic.woff
+│   │   │   │   ├── lato-normal-italic.woff2
+│   │   │   │   ├── lato-normal.woff
+│   │   │   │   └── lato-normal.woff2
+│   │   │   └── theme.css
+│   │   ├── doctools.js
+│   │   ├── documentation_options.js
+│   │   ├── file.png
+│   │   ├── fonts
+│   │   │   ├── Lato
+│   │   │   │   ├── lato-bold.eot
+│   │   │   │   ├── lato-bold.ttf
+│   │   │   │   ├── lato-bold.woff
+│   │   │   │   ├── lato-bold.woff2
+│   │   │   │   ├── lato-bolditalic.eot
+│   │   │   │   ├── lato-bolditalic.ttf
+│   │   │   │   ├── lato-bolditalic.woff
+│   │   │   │   ├── lato-bolditalic.woff2
+│   │   │   │   ├── lato-italic.eot
+│   │   │   │   ├── lato-italic.ttf
+│   │   │   │   ├── lato-italic.woff
+│   │   │   │   ├── lato-italic.woff2
+│   │   │   │   ├── lato-regular.eot
+│   │   │   │   ├── lato-regular.ttf
+│   │   │   │   ├── lato-regular.woff
+│   │   │   │   └── lato-regular.woff2
+│   │   │   └── RobotoSlab
+│   │   │       ├── roboto-slab-v7-bold.eot
+│   │   │       ├── roboto-slab-v7-bold.ttf
+│   │   │       ├── roboto-slab-v7-bold.woff
+│   │   │       ├── roboto-slab-v7-bold.woff2
+│   │   │       ├── roboto-slab-v7-regular.eot
+│   │   │       ├── roboto-slab-v7-regular.ttf
+│   │   │       ├── roboto-slab-v7-regular.woff
+│   │   │       └── roboto-slab-v7-regular.woff2
+│   │   ├── jquery.js
+│   │   ├── js
+│   │   │   ├── badge_only.js
+│   │   │   ├── theme.js
+│   │   │   └── versions.js
+│   │   ├── language_data.js
+│   │   ├── minus.png
+│   │   ├── plus.png
+│   │   ├── pygments.css
+│   │   ├── searchtools.js
+│   │   └── sphinx_highlight.js
+│   ├── build
+│   ├── genindex.html
+│   ├── index.html
+│   ├── make.bat
+│   ├── modules.html
+│   ├── objects.inv
+│   ├── py-modindex.html
+│   ├── search.html
+│   ├── searchindex.js
+│   ├── source
+│   │   ├── _static
+│   │   ├── _templates
+│   │   ├── conf.py
+│   │   ├── index.rst
+│   │   ├── modules.rst
+│   │   ├── src.br01_02_setup_api_store_data.fetch_weather.rst
+│   │   ├── src.br01_02_setup_api_store_data.rst
+│   │   ├── src.br03_data_analysis.rst
+│   │   ├── src.br04_machine_learning1.rst
+│   │   ├── src.br05_machine_learning2.rst
+│   │   └── src.rst
+│   ├── src.br01_02_setup_api_store_data.fetch_weather.html
+│   ├── src.br01_02_setup_api_store_data.html
+│   ├── src.br03_data_analysis.html
+│   ├── src.br04_machine_learning1.html
+│   ├── src.br05_machine_learning2.html
+│   └── src.html
+├── generate-documentation.sh
+├── htmlcov
+│   ├── class_index.html
+│   ├── coverage_html_cb_6fb7b396.js
+│   ├── favicon_32_cb_58284776.png
+│   ├── function_index.html
+│   ├── index.html
+│   ├── keybd_closed_cb_ce680311.png
+│   ├── status.json
+│   ├── style_cb_8e611ae1.css
+│   ├── z_145eef247bfb46b6___init___py.html
+│   ├── z_4efbf477106a0c1d_04-ML1_py.html
+│   ├── z_4efbf477106a0c1d___init___py.html
+│   ├── z_7cd17fe43024098e___init___py.html
+│   ├── z_7cd17fe43024098e_fetch_weather_py.html
+│   ├── z_7eeebacf481b763c_05-ML2_py.html
+│   ├── z_7eeebacf481b763c___init___py.html
+│   ├── z_83c290fbd52773f9___init___py.html
+│   ├── z_83c290fbd52773f9_fetch_weather_py.html
+│   ├── z_987a0a7564de0b72___init___py.html
+│   ├── z_987a0a7564de0b72_analyze_data_py.html
+│   ├── z_9dd04bf8d7f21698___init___py.html
+│   ├── z_a7fd8bdadf88a447___init___py.html
+│   ├── z_a7fd8bdadf88a447_analyze_data_py.html
+│   ├── z_a9bb5a9804d93465_05-ML2_py.html
+│   ├── z_a9bb5a9804d93465___init___py.html
+│   ├── z_df9602cee758ce31_04-ML1_py.html
+│   ├── z_df9602cee758ce31___init___py.html
+│   └── z_ea3053870f1cdba9___init___py.html
+├── notebooks
+│   ├── 01-02-setup_api_store_data
+│   │   ├── fetch_weather_notebook.ipynb
+│   │   └── store_data_notebook.ipynb
+│   ├── 03-data_analysis
+│   │   ├── analyze_data.ipynb
+│   │   └── analyze_data_notebook_1.ipynb
+│   ├── 04-machine_learning1
+│   │   └── 04-ML1.ipynb
+│   ├── 05-machine_learning2
+│   │   ├── 05-ML2.ipynb
+│   │   └── h2ologs
+│   │       └── local-1730638808836
+│   │           ├── h2o_172.17.0.2_54321-1-trace.log
+│   │           ├── h2o_172.17.0.2_54321-2-debug.log
+│   │           ├── h2o_172.17.0.2_54321-3-info.log
+│   │           ├── h2o_172.17.0.2_54321-4-warn.log
+│   │           ├── h2o_172.17.0.2_54321-5-error.log
+│   │           ├── h2o_172.17.0.2_54321-6-fatal.log
+│   │           └── h2o_172.17.0.2_54321-httpd.log
+│   ├── 06-scoring_system
+│   │   └── 06-scoring_system.ipynb
+│   ├── 07-dashboard_backend
+│   │   └── 07-dashboard_backend.ipynb
+│   ├── 08-dashboard_frontend
+│   │   └── 08-dashboard_frontend.ipynb
+│   └── 09-dashboard_enhancement
+│       └── 09-dashboard_enhancement.ipynb
+├── requirements.txt
+├── run-unit-tests-and-coverage.sh
+├── src
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   └── __init__.cpython-312.pyc
+│   ├── br01_02_setup_api_store_data
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   │   └── __init__.cpython-312.pyc
+│   │   ├── fetch_weather
+│   │   │   ├── __init__.py
+│   │   │   ├── __pycache__
+│   │   │   │   ├── __init__.cpython-312.pyc
+│   │   │   │   └── fetch_weather.cpython-312.pyc
+│   │   │   └── fetch_weather.py
+│   │   └── store_data
+│   │       └── store_data.py
+│   ├── br03_data_analysis
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   │   ├── __init__.cpython-312.pyc
+│   │   │   └── analyze_data.cpython-312.pyc
+│   │   └── analyze_data.py
+│   ├── br04_machine_learning1
+│   │   ├── 04-ML1.py
+│   │   └── __init__.py
+│   ├── br05_machine_learning2
+│   │   ├── 05-ML2.py
+│   │   └── __init__.py
+│   ├── br06_scoring_system
+│   │   └── 06-scoring_system.py
+│   ├── br07_dashboard_backend
+│   │   └── 07-dashboard_backend.py
+│   ├── br08_dashboard_frontend
+│   │   └── 08-dashboard_frontend.py
+│   └── br09_dashboard_enhancement
+│       └── 09-dashboard_enhancement.py
+└── tests
+    ├── __init__.py
+    ├── __pycache__
+    │   ├── __init__.cpython-312.pyc
+    │   ├── test_04-ML1.cpython-312-pytest-8.3.3.pyc
+    │   ├── test_05-ML2.cpython-312-pytest-8.3.3.pyc
+    │   ├── test_analyze_data.cpython-312-pytest-8.3.3.pyc
+    │   └── test_fetch_weather.cpython-312-pytest-8.3.3.pyc
+    ├── test_04-ML1.py
+    ├── test_05-ML2.py
+    ├── test_analyze_data.py
+    └── test_fetch_weather.py
+
+54 directories, 251 files
