@@ -138,7 +138,85 @@ The combination of WSL, Docker, and the Python 3.12-slim base image creates a un
 
 By leveraging these technologies, the project benefits from an optimized development process, enhanced portability, and seamless collaboration across different platforms.
 
+## Test Coverage of the code
+### 1. Setting Up the Testing Environment
+**IN EACH FOLDER OF YOUR PYSCRIPT (if there are multiple folders) CREATE `__init__.py` file.** This ensures that the folder can be imported as a module (later on in the testing).
+**Install Dependencies**
+Ensure that pytest and pytest-cov are installed for running tests and measuring coverage.
+`pip install pytest pytest-cov`
+### 2. Organize the Tests
+**Create a tests/ directory in the root of your project to hold all test files.**
+Inside tests/, create separate test files for each module. **For example:**
+test_fetch_weather.py: Tests for fetch_weather.py
+test_analyze_data.py: Tests for analyze_data.py
+### 3. Writing Tests for Each Module
+**Tests for fetch_weather.py**
+Test the following:
 
-    
-    
+- API Client Setup: Verify that the API client is set up with caching and retry functionality.
+- Data Fetching: Ensure fetch_weather_data retrieves data correctly from the API.
+- Data Processing: Confirm that process_hourly_data and process_daily_data functions return DataFrames with the expected structure.
+- Example Tests for fetch_weather.py:
+
+
+### 4. Running Tests with Coverage
+**Set up pytest with coverage to measure the effectiveness of your tests.**
+
+Creating a Coverage Configuration File
+Add a `.coveragerc` file(s) in the root directory to customize coverage reporting:
+```bash
+[run]
+omit =
+    path/to/file/thatYouWantToOmit
+```
+### 5. Run Tests and Generate Coverage Report
+**Create the shell script file to automate the tests in the root directory of the project:**
+`touch run-scripts.sh` in the terminal
+Add content to it:
+```bash
+# bin/bash/
+pytest --cov=src --cov-config=.coveragerc --cov-report=html --cov-report=term tests/
+```
+Run it in the terminal:
+`./run-scripts.sh`
+### 6. See the results
+- start a local server: `python3 -m http.server` in the terminal
+- Access htmlcov directory on the server:
+  ![image](https://github.com/user-attachments/assets/f81fd859-042e-4b20-9d13-ea3252063d76) **- make sure to document why you excluded code from the test** (in my case i did it, but I can't make sphinx-autodoc work lol)
+
+## Autodocumentation with Sphinx
+1. Install sphinx
+   `pip install sphinx sphinx-autodoc sphinx_rtd_theme`
+2. Initialize sphinx in the project
+   `sphinx-quickstart docs`
+   - Follow the prompts to set up basic settings.
+   - This command creates a docs/ folder with initial configuration files, including conf.py.
+3. Set paths
+ ```bash
+   import os
+   import sys
+   sys.path.insert(0, os.path.abspath('../src'))  # Adjust as needed for your project structure
+```
+4. Generate doc files
+   `sphinx-apidoc -o source ../src # adjust path if needed`
+5. Create generate-documentation.sh for automation
+   Add content:
+```bash
+   #!/bin/bash
+sphinx-apidoc -o docs/source ../src
+sphinx-build -b html docs docs/_build
+```
+6. Run `./generate-documentation.sh` in the terminal
+**IN MY CASE I ENCOUNTER SOME ERRORS:** Maybe because of the name of the folders?!
+![image](https://github.com/user-attachments/assets/e5675c20-0ae0-4fdd-a914-98d2b09d6266)
+![image](https://github.com/user-attachments/assets/134b5f8b-9a56-40a4-9b2c-99d96ac7d8e3)
+**RESULT:**
+![image](https://github.com/user-attachments/assets/d66be6ce-a8f7-4155-86af-93132cec22f1) - NOT WORKING!
+
+
+
+ 
+
+
+
     
