@@ -20,6 +20,7 @@ By leveraging data from a reliable weather API, our project collects and analyze
 - **Weather API**: Open-Meteo for accessing historical weather data.
 - **Containerization**: Docker (python 3.12-slim base image) to ensure consistent development and deployment environments.
 - **Windows Subsystem for Linux (WSL)**: For creating a Unix-like environment on Windows machines to ensure compatibility with Unix-based tools and Docker containers.
+- **Testing**: pytest, unittest for validating py scripts.
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Project Setup Instructions
 
