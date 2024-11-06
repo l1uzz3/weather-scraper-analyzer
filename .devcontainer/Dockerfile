@@ -24,7 +24,8 @@ RUN useradd -m weather_project_user -s /bin/bash \
 USER weather_project_user
 WORKDIR /home/weather_project_user
 
-# Download and unpack Apache Spark
+# ***UNCOMMENT ONLY IF YOU WANT SPARK INSTALLED...*** 
+# Download and unpack Apache Spark if using spark (not the case here)
 # RUN wget https://dlcdn.apache.org/spark/spark-3.5.3/spark-3.5.3-bin-hadoop3.tgz && \
 #     tar -xvf spark-3.5.3-bin-hadoop3.tgz && \
 #     mv spark-3.5.3-bin-hadoop3 spark && \
@@ -178,7 +179,8 @@ RUN /home/weather_project_user/venv/bin/pip install \
     WTForms==3.2.1 \
     xgboost==2.1.2 \
     yarl==1.17.1 \
-    zipp==3.20.2 
+    zipp==3.20.2 \
+    sphinx-autodocgen
     # h2o \
     # h2o_pysparkling_3.5 
     

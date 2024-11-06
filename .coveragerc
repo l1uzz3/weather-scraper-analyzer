@@ -1,0 +1,6 @@
+[run]
+omit =
+    src/br04_machine_learning1/04-ML1.py
+    src/br05_machine_learning2/05-ML2.py
+    */__init__.py
+
