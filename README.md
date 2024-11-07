@@ -204,15 +204,16 @@ Run it in the terminal:
    Add content:
 ```bash
    #!/bin/bash
-sphinx-apidoc -o docs/source ../src
+sphinx-apidoc -o docs/source ../src # adjust path if needed
 sphinx-build -b html docs docs/_build
 ```
+**MAKE SURE TO HAVE conf.py and index.rst in the docs/source dir.**
 6. Run `./generate-documentation.sh` in the terminal
-**IN MY CASE I ENCOUNTER SOME ERRORS:** Maybe because of the name of the folders?!
-![image](https://github.com/user-attachments/assets/e5675c20-0ae0-4fdd-a914-98d2b09d6266)
-![image](https://github.com/user-attachments/assets/134b5f8b-9a56-40a4-9b2c-99d96ac7d8e3)
-**RESULT:**
-![image](https://github.com/user-attachments/assets/d66be6ce-a8f7-4155-86af-93132cec22f1) - NOT WORKING!
+![image](https://github.com/user-attachments/assets/964d9fef-7fc8-4ccf-b035-bfb154d82d77)
+(Still have some errors when importing the tests module (directory) for some reason...)
+![image](https://github.com/user-attachments/assets/1ef05dd5-8747-4dd9-9fb6-a9c91590278f)
+
+
 
 
 
