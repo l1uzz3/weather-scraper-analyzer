@@ -28,8 +28,26 @@ daily_df = daily_df.set_index('date')
 
 
 class WeatherAnalyzer:
-    # initializing the class and setting the variables 
-    def __init__(self, hourly_data = hourly_df, daily_data = daily_df):
+    """
+    Analyzes and aggregates hourly and daily weather data, providing various metrics and time-based aggregation.
+    
+    Attributes:
+        hourly_data (DataFrame): DataFrame containing hourly weather data.
+        daily_data (DataFrame): DataFrame containing daily weather data.
+        hourly_metrics (dict): Metrics for hourly data, including mean, max, min, and standard deviation.
+        daily_metrics (dict): Metrics for daily data, including mean, max, min, and standard deviation.
+        timeframe_mapping (dict): Maps descriptive timeframes ('week', 'month', 'season', 'year') to resampling codes.
+        season_names (dict): Maps season numbers (1-4) to names ('Winter', 'Spring', etc.).
+    """
+
+    def __init__(self, hourly_data, daily_data):
+        """
+        Initializes the WeatherAnalyzer with hourly and daily data.
+
+        Args:
+            hourly_data (DataFrame): Hourly weather data.
+            daily_data (DataFrame): Daily weather data.
+        """
         self.hourly_data = hourly_data
         self.daily_data = daily_data
         # Setting the metrics
@@ -50,7 +68,6 @@ class WeatherAnalyzer:
             'wind_gusts_10m_max_kmh': ['mean', 'max', 'min', 'std'],
             'wind_direction_10m_dominant_deg': ['mean', 'max', 'min', 'std']
         }
-
         self.timeframe_mapping = {
             'week': 'W',
             'month': 'ME',
@@ -61,57 +78,84 @@ class WeatherAnalyzer:
             1: 'Winter', 
             2: 'Spring', 
             3: 'Summer', 
-            4: 'Autumn'}
-
-    # aggregations hourly, daily (week, month, season, year)
+            4: 'Autumn'
+        }
 
     def aggregate_hourly(self, timeframe):
-        # Map descriptive timeframe to the corresponding code
-        resample_code = self.timeframe_mapping.get(timeframe, timeframe)  # fallback to original code if not mapped
+        """
+        Aggregates hourly data based on the specified timeframe.
+
+        Args:
+            timeframe (str): Timeframe for aggregation ('week', 'month', 'season', 'year').
+
+        Returns:
+            DataFrame: Aggregated hourly data with specified metrics.
+        """
+        resample_code = self.timeframe_mapping.get(timeframe, timeframe)
         return self.hourly_data.resample(resample_code).agg(self.hourly_metrics)
 
     def aggregate_daily(self, timeframe):
-        # Map descriptive timeframe to the corresponding code
+        """
+        Aggregates daily data based on the specified timeframe.
+
+        Args:
+            timeframe (str): Timeframe for aggregation ('week', 'month', 'season', 'year').
+
+        Returns:
+            DataFrame: Aggregated daily data with specified metrics.
+        """
         resample_code = self.timeframe_mapping.get(timeframe, timeframe)
         return self.daily_data.resample(resample_code).agg(self.daily_metrics)
 
     def display_aggregated_data(self):
-        # Weekly aggregations
-        weekly_hourly = self.aggregate_hourly('W')
-        weekly_daily = self.aggregate_daily('W')
-        
-        # Monthly aggregations
-        monthly_hourly = self.aggregate_hourly('ME')
-        monthly_daily = self.aggregate_daily('ME')
-        
-        # Seasonal aggregations
-        seasonal_hourly = self.aggregate_hourly('QE')
-        seasonal_daily = self.aggregate_daily('QE')
-        
-        # Yearly aggregations
-        yearly_hourly = self.aggregate_hourly('YE')
-        yearly_daily = self.aggregate_daily('YE')
-        
+        """
+        Generates aggregated data for weekly, monthly, seasonal, and yearly timeframes.
+
+        Returns:
+            dict: Dictionary containing aggregated data for different timeframes and metrics.
+        """
         return {
-            'weekly_hourly': weekly_hourly, 
-            'weekly_daily': weekly_daily,
-            'monthly_hourly': monthly_hourly,
-            'monthly_daily': monthly_daily,
-            'seasonal_hourly': seasonal_hourly,
-            'seasonal_daily': seasonal_daily,
-            'yearly_hourly': yearly_hourly,
-            'yearly_daily': yearly_daily
+            'weekly_hourly': self.aggregate_hourly('week'), 
+            'weekly_daily': self.aggregate_daily('week'),
+            'monthly_hourly': self.aggregate_hourly('month'),
+            'monthly_daily': self.aggregate_daily('month'),
+            'seasonal_hourly': self.aggregate_hourly('season'),
+            'seasonal_daily': self.aggregate_daily('season'),
+            'yearly_hourly': self.aggregate_hourly('year'),
+            'yearly_daily': self.aggregate_daily('year')
         }
 
-    # calculate above/under variability to find variations (More extreme variations = extreme weather.) 
     def calculate_filter_variability(self, parameter, timeframe, threshold, variability_type):
+        """
+        Filters data based on variability threshold for a specified parameter.
+
+        Args:
+            parameter (str): Weather parameter to analyze.
+            timeframe (str): Timeframe for aggregation.
+            threshold (float): Variability threshold to filter data.
+            variability_type (str): Type of variability ('above' or 'below').
+
+        Returns:
+            DataFrame: Filtered data based on specified variability criteria.
+        """
         data = self.aggregate_hourly(timeframe) if timeframe in self.timeframe_mapping else None
         high_var = data[data[parameter]['std'] > threshold]
         low_var = data[data[parameter]['std'] < threshold]
         return high_var if variability_type == 'above' else low_var
 
     # generate month colors. 
-    """This function generates colors for the following plots (for each month). I think this is not a crucial function to test since it's about visualization of the plots."""
+    """This function generates colors for the following plots (for each month). I think this is not a crucial function to test since it's about visualization of the plots.
+       Generate a color palette for each month.
+
+    This method maps each month to a unique color for plot visualizations.
+    Colors are generated using the 'hsv' palette, which provides a range of distinct colors.
+
+    Parameters:
+        data (DataFrame): Weather data with a datetime index containing month information.
+
+    Returns:
+        dict: A dictionary mapping each unique month name to a color.
+    """    
     def generate_month_colors(self, data): # pragma: no cover
         unique_months = data.index.month_name().unique()  # Get unique month names from the index
         color_list = sns.color_palette("hsv", 12)
@@ -119,7 +163,18 @@ class WeatherAnalyzer:
 
     
     # generate season colors
-    """This function generates colors for the following plots (for each season). I think this is not a crucial function to test since it's about visualization of the plots."""
+    """This function generates colors for the following plots (for each season). I think this is not a crucial function to test since it's about visualization of the plots.
+    Generate a color palette for each season.
+
+        This method maps each season to a unique color for plot visualizations.
+        Colors are generated using the 'hsv' palette.
+
+        Parameters:
+            data (DataFrame): Weather data with a datetime index containing season information.
+
+        Returns:
+            dict: A dictionary mapping each season name to a color.
+        """
     def generate_season_colors(self, data): # pragma: no cover
         unique_seasons = data.index.quarter.unique()
         color_list = sns.color_palette("hsv", 4)
@@ -127,7 +182,18 @@ class WeatherAnalyzer:
     
         
     # generate year_colors 
-    """This function generates colors for the following plots (for each year). I think this is not a crucial function to test since it's about visualization of the plots."""
+    """This function generates colors for the following plots (for each year). I think this is not a crucial function to test since it's about visualization of the plots.
+    Generate a color palette for each year.
+
+        This method maps each year to a unique color for plot visualizations.
+        Colors are generated using the 'hsv' palette, with a maximum of 30 colors.
+
+        Parameters:
+            data (DataFrame): Weather data with a datetime index containing year information.
+
+        Returns:
+            dict: A dictionary mapping each unique year to a color.
+        """
     def generate_year_colors(self, data): # pragma: no cover
         unique_years = data.index.year.unique()
         color_list = sns.color_palette("hsv", 30)
@@ -135,7 +201,21 @@ class WeatherAnalyzer:
 
 
     # plot variability
-    """Since it's quite difficult to test actual graphs, I will exclude them from the testing."""
+    """Since it's quite difficult to test actual graphs, I will exclude them from the testing.
+    Plot weather data variability for specified timeframes.
+
+        This method generates scatter plots showing high or low variability in a weather parameter 
+        based on standard deviation thresholds. Plots are color-coded for months, seasons, or years.
+
+        Parameters:
+            parameter (str): The weather parameter to analyze (e.g., temperature).
+            timeframe (str): The timeframe to aggregate data ('week', 'month', 'season', 'year').
+            threshold (float): The standard deviation threshold for variability.
+            variability_type (str): Type of variability to plot ('above' or 'under').
+
+        Returns:
+            PLOT
+        """
     def plot_variability(self, parameter, timeframe, threshold, variability_type): # pragma: no cover
         high_variability_data = self.calculate_filter_variability(parameter, timeframe, threshold, variability_type='above')
         low_variability_data = self.calculate_filter_variability(parameter, timeframe, threshold, variability_type='under')
@@ -273,6 +353,18 @@ class WeatherAnalyzer:
             
 
     # plotting yearly trends using daily data
+    """Not included in the testing. Plot yearly trends in weather data for weekly, monthly, seasonal, and yearly timeframes.
+
+        This method generates trend plots, using heatmaps for weekly and monthly data,
+        and line plots for seasonal and yearly data.
+
+        Parameters:
+            parameter (str): The weather parameter to analyze (e.g., temperature).
+            timeframe (str): The timeframe for trend plotting ('week', 'month', 'season', 'year').
+
+        Returns:
+            PLOT
+        """    
     def plot_trend(self, parameter, timeframe): # pragma: no cover
         weekly_data = self.aggregate_daily('week')
         monthly_data = self.aggregate_daily('month')
@@ -354,6 +446,15 @@ class WeatherAnalyzer:
             plt.show()
 
     # Boxplot weather variables distribution
+        """Not included in the tests. 
+        Generate seasonal boxplots for temperature, precipitation, and wind speed distributions.
+
+        This method creates boxplots showing the distribution of weather parameters across different seasons.
+        Useful for visualizing variability and comparing seasonal changes.
+
+        Returns:
+            PLOT
+        """    
     def plot_seasonal_boxplots(self): # pragma: no cover
         # Add 'season' column to the daily data based on the quarter
         self.daily_data['season'] = self.daily_data.index.quarter.map(self.season_names)
@@ -386,12 +487,30 @@ class WeatherAnalyzer:
 # it will inherit functions(methods) like aggregate_daily / aggregate_hourly, or other variables!!!
 
 class ExtremeWeatherAnalyzer(WeatherAnalyzer):
+    """
+    Analyzes extreme weather events by identifying, flagging, and calculating frequency of high and low extreme weather conditions.
+
+    Inherits from:
+        WeatherAnalyzer: A class for general weather data analysis and visualization.
+    """
     def __init__(self, hourly_data, daily_data):
         # calling the constructor of the parent class
+        """
+        Initialize the ExtremeWeatherAnalyzer with hourly and daily weather data.
+
+        Parameters:
+            hourly_data (DataFrame): Hourly weather data.
+            daily_data (DataFrame): Daily weather data.
+        """
         super().__init__(hourly_data, daily_data)
     
     # Set fixed or percentile-based thresholds
     def define_thresholds(self):
+        """
+        Define thresholds for extreme weather events based on percentile values for temperature, precipitation, and wind speed.
+        
+        High and low extremes are set at the 95th and 5th percentiles of each parameter.
+        """
         self.temperature_high = self.daily_data['temperature_2m_max_C'].quantile(0.95)
         self.temperature_low = self.daily_data['temperature_2m_min_C'].quantile(0.05)
         self.precipitation_high = self.daily_data['precipitation_sum_mm'].quantile(0.95)
@@ -400,6 +519,17 @@ class ExtremeWeatherAnalyzer(WeatherAnalyzer):
         self.wind_speed_low = self.daily_data['wind_speed_10m_max_kmh'].quantile(0.05)
 
     def flag_extreme_events(self):
+        """
+        Flag days with extreme weather events by setting indicators for high and low extremes of temperature, precipitation, and wind speed.
+
+        Flags:
+            - extreme_high_temp: Boolean flag for extreme high temperatures.
+            - extreme_low_temp: Boolean flag for extreme low temperatures.
+            - extreme_high_precipitation: Boolean flag for heavy precipitation days.
+            - extreme_low_precipitation: Boolean flag for low precipitation days.
+            - extreme_high_wind_speed: Boolean flag for high wind speed days.
+            - extreme_low_wind_speed: Boolean flag for low wind speed days.
+        """
         # Flag extreme high and low temperatures
         self.daily_data['extreme_high_temp'] = self.daily_data['temperature_2m_max_C'] > self.temperature_high
         self.daily_data['extreme_low_temp'] = self.daily_data['temperature_2m_min_C'] < self.temperature_low
@@ -414,6 +544,12 @@ class ExtremeWeatherAnalyzer(WeatherAnalyzer):
 
 
     def calculate_frequency(self):
+        """
+        Calculate the frequency of extreme weather events by year.
+
+        Returns:
+            DataFrame: Frequency of each extreme weather event type by year.
+        """
         # Calculate the frequency of extreme events by year
         extreme_events = self.daily_data.groupby(self.daily_data.index.year)[[
             'extreme_high_temp', 'extreme_low_temp', 'extreme_high_precipitation', 'extreme_low_precipitation', 
@@ -422,7 +558,15 @@ class ExtremeWeatherAnalyzer(WeatherAnalyzer):
         return extreme_events
 
     def plot_high_extreme_events(self, extreme_events): # pragma: no cover
+        """
+        Plot frequency of high extreme weather events over time, including high temperatures, precipitation, and wind speeds.
 
+        Parameters:
+            extreme_events (DataFrame): Frequency of extreme high events by year.
+
+        Note:
+            Excluded from testing as it generates plots.
+        """
         plt.figure(figsize=(12, 8))
 
         # Scatter plot for extreme events (high)
@@ -464,7 +608,15 @@ class ExtremeWeatherAnalyzer(WeatherAnalyzer):
         plt.show()
 
     def plot_low_extreme_events(self, extreme_events): # pragma: no cover
+        """
+        Plot frequency of low extreme weather events over time, including low temperatures, precipitation, and wind speeds.
 
+        Parameters:
+            extreme_events (DataFrame): Frequency of extreme low events by year.
+
+        Note:
+            Excluded from testing as it generates plots.
+        """
         plt.figure(figsize=(12, 8))
 
         # Scatter plot for extreme events (low)
@@ -505,6 +657,12 @@ class ExtremeWeatherAnalyzer(WeatherAnalyzer):
         plt.show()
 
     def calculate_average_values(self):
+        """
+        Calculate the average values for each type of extreme event.
+
+        Returns:
+            Variables like avg_high_temp, avg_low_temp, avg_high_precip, low_precip_data, avg_low_precip, avg_high_wind, avg_low_wind
+        """
         # Calculate the average values for each extreme event
         avg_high_temp = self.daily_data[self.daily_data['extreme_high_temp']]['temperature_2m_max_C'].mean()
         avg_low_temp = self.daily_data[self.daily_data['extreme_low_temp']]['temperature_2m_min_C'].mean()
@@ -522,7 +680,14 @@ class ExtremeWeatherAnalyzer(WeatherAnalyzer):
         print(f"Average Low Wind Speed (Extreme Events): {avg_low_wind:.2f} km/h")
 
 ## Usage
-"""I will exclude the below block code because I individually tested the crucial functions above. This runs the script """
+"""I will exclude the below block code because I individually tested the crucial functions above. This runs the script 
+This script demonstrates how to use the `WeatherAnalyzer` and `ExtremeWeatherAnalyzer` classes
+to analyze and visualize weather trends and extreme events. It runs specific functions for plotting 
+trends, calculating variability, and analyzing extreme weather events.
+Note:
+The following code block is intended for demonstration purposes and should be excluded from testing 
+because it includes extensive visualizations.
+"""
 if __name__ == '__main__': # pragma: no cover
     analyzer = WeatherAnalyzer()
     print("It works before defining the variable extreme_weather_analyzer to the ExtremeWeatherAnalyzer class...")

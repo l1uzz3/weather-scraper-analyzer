@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 from unittest.mock import patch, MagicMock
-from src.br01_02_setup_api_store_data.fetch_weather.fetch_weather import (
+from src.br01_02_fetch_data.fetch_weather.fetch_weather import (
     setup_api_client,
     fetch_weather_data,
     process_hourly_data,

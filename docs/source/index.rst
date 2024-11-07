@@ -1,4 +1,9 @@
-Weather Scraper Analyzer Documentation
+.. Weather Analyzer documentation master file, created by
+   sphinx-quickstart on Thu Nov  7 09:44:37 2024.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Weather Scraper Analyzer documentation
 ======================================
 
 .. toctree::
@@ -6,21 +11,28 @@ Weather Scraper Analyzer Documentation
    :caption: Contents:
 
 Modules
-=======
+-------
 
-.. automodule:: src.br01_02_setup_api_store_data.fetch_weather.fetch_weather
+.. automodule:: br03_data_analysis.analyze_data
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: src.br03_data_analysis.analyze_data
+.. automodule:: br01_02_fetch_data.fetch_weather.fetch_weather
    :members:
    :undoc-members:
    :show-inheritance:
 
-Indices and tables
-==================
+Tests
+-----
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. automodule:: tests.test_analyze_data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: tests.test_fetch_weather
+   :members:
+   :undoc-members:
+   :show-inheritance:
+

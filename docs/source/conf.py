@@ -7,13 +7,12 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 import os
 import sys
-
-sys.path.insert(0, os.path.abspath('../../src'))
 sys.path.insert(0, os.path.abspath('../../tests'))
+sys.path.insert(0, os.path.abspath('../../src'))
 
-project = 'Weather Scraper Analyzer'
-copyright = '2024, Ștefan Liuțe'
-author = 'Ștefan Liuțe'
+project = 'Weather Analyzer'
+copyright = '2024, Stefan Liute'
+author = 'Stefan Liute'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -25,11 +24,10 @@ extensions = [
     'sphinx_rtd_theme'
 ]
 
-autodoc_mock_imports = ["pandas", "openmeteo_requests", "numpy", "matplotlib", "psutil", "prophet"]
-
-
 templates_path = ['_templates']
-exclude_patterns = []
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+
+
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

@@ -104,7 +104,7 @@ def store_data_to_db(df, table_name, conn):
 
 def main(): # pragma: no cover
     """
-    Main function to execute the weather data fetching and processing.
+    *NOT INCLUDED INTO THE TEST COV* | Main function to execute the weather data fetching and processing.
     Sets up the API client, fetches data, processes it, cleans it, and stores it in a database.
     """
     openmeteo = setup_api_client()
